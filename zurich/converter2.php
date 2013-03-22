@@ -141,13 +141,16 @@ foreach ($zhData as $node) {
 
 // convert to new format
 
-
-foreach($json as $l1) {
+$count = 0;
+foreach($zhData as $l1) {
+    $count++;
     $newL1 = new NewBudgetNode($l1);
     foreach($l1->agencies as $l2) {
+        $count++;
         $newL2 = new NewBudgetNode($l2);
         $newL1->children[] = $newL2;
         foreach($l2->product_groups as $l3) {
+            $count++;
             $newL3 = new NewBudgetNode($l3);
             $newL2->children[] = $newL3;
         }
@@ -156,7 +159,6 @@ foreach($json as $l1) {
 }
 
 echo indent(json_encode($newData));
-
 
 ?></pre>
     </body>
