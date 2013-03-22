@@ -11,15 +11,15 @@
  */
 function indent($json) {
 
-    $result      = '';
-    $pos         = 0;
-    $strLen      = strlen($json);
-    $indentStr   = '  ';
-    $newLine     = "\n";
-    $prevChar    = '';
+    $result = '';
+    $pos = 0;
+    $strLen = strlen($json);
+    $indentStr = '  ';
+    $newLine = "\n";
+    $prevChar = '';
     $outOfQuotes = true;
 
-    for ($i=0; $i<=$strLen; $i++) {
+    for ($i = 0; $i <= $strLen; $i++) {
 
         // Grab the next character in the string.
         $char = substr($json, $i, 1);
@@ -28,12 +28,12 @@ function indent($json) {
         if ($char == '"' && $prevChar != '\\') {
             $outOfQuotes = !$outOfQuotes;
 
-        // If this character is the end of an element,
-        // output a new line and indent the next line.
-        } else if(($char == '}' || $char == ']') && $outOfQuotes) {
+            // If this character is the end of an element,
+            // output a new line and indent the next line.
+        } else if (($char == '}' || $char == ']') && $outOfQuotes) {
             $result .= $newLine;
-            $pos --;
-            for ($j=0; $j<$pos; $j++) {
+            $pos--;
+            for ($j = 0; $j < $pos; $j++) {
                 $result .= $indentStr;
             }
         }
@@ -46,7 +46,7 @@ function indent($json) {
         if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
             $result .= $newLine;
             if ($char == '{' || $char == '[') {
-                $pos ++;
+                $pos++;
             }
 
             for ($j = 0; $j < $pos; $j++) {
@@ -59,4 +59,24 @@ function indent($json) {
 
     return $result;
 }
-?>
+
+function cleanAmount($in) {
+    $out = str_replace("’", "", $in);
+    if (!is_numeric($out)) {
+        return 0;
+    }
+    return floatval($out);
+}
+
+function addAmount(& $obj, $year, $amount) {
+    $amount = cleanAmount($amount);
+    $gross_cost = 0;
+    $revenue = 0;
+    if ($amount > 0) {
+        $gross_cost = $amount;
+    } else {
+        $revenue = -1 * $amount;
+    }
+    @ $obj->gross_cost['budgets'][$year] += $gross_cost;
+    @ $obj->revenue['budgets'][$year] += $revenue;
+}

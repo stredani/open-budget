@@ -32,11 +32,11 @@ class zh2013 {
         foreach ($fields as $i => $var) {
             $this->$var = $row[$i];
         }
-        
+
         if ($this->dienstabteilung == "Kultur") {
             $this->code = "1501";
         }
-        
+
         if ($this->dienstabteilung == "Museum Rietberg") {
             $this->code = "1520";
         }
@@ -50,15 +50,15 @@ class zh2013 {
     }
 
     // LEVEL 1
-    
+
     function getLevel2Id() {
         return $this->getId() . "_" . $this->code;
     }
-    
+
     function isSum() {
         return $this->konto == "";
     }
-    
+
     function isCost() {
         return $this->isSum() && $this->bezeichnung == "Aufwand";
     }
@@ -66,25 +66,25 @@ class zh2013 {
     function isExpense() {
         return $this->isSum() && $this->bezeichnung == "Ausgaben";
     }
-    
+
     function isRevenue() {
-        return $this->isSum() && $this->bezeichnung == "Ertrag";
+        return $this->isSum() && trim($this->bezeichnung) == "Ertrag";
     }
-    
+
     function isBalance() {
         return $this->isSum() && $this->bezeichnung == "Saldo (+ Aufwandüberschuss/- Ertragsüberschuss)";
     }
-    
+
     function isRoot() {
         return $this->isCost() || $this->isRevenue() || $this->isBalance();
     }
-    
+
     // LEVEL 2
-    
+
     function hasKonto() {
         return $this->konto != "";
     }
-    
+
     function getLevel3Id() {
         return $this->getLevel2Id() . "_" . $this->konto;
     }
@@ -92,6 +92,7 @@ class zh2013 {
 }
 
 class BudgetNode {
+
     var $level = 1;
     var $number;
     var $name;
@@ -99,11 +100,34 @@ class BudgetNode {
 //    var $subNodes = array();
     var $parent;
     var $gross_cost = array("budgets" => array());
-    
+    var $revenue = array("budgets" => array());
     var $agencies = array();
     var $product_groups = array();
     var $products = array();
+
 }
 
+class NewBudgetNode {
+
+    var $id;
+    var $name;
+    var $gross_cost = array(
+        "budgets" => array()
+    );
+    var $revenue = array(
+        "budgets" => array()
+    );
+    var $children = array();
+
+    function __construct($oldNode = null) {
+        if ($oldNode != null) {
+            $this->id = $oldNode->number;
+            $this->name = $oldNode->name;
+            $this->gross_cost = $oldNode->gross_cost;
+            $this->revenue = $oldNode->revenue;
+        }
+    }
+
+}
 
 ?>
